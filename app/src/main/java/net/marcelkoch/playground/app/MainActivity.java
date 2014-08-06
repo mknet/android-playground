@@ -4,7 +4,6 @@ import android.app.ListActivity;
 import android.app.LoaderManager;
 import android.content.ContentResolver;
 import android.content.Context;
-import android.content.CursorLoader;
 import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
@@ -16,6 +15,8 @@ import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.SimpleCursorAdapter;
 
+import net.marcelkoch.playground.core.ContactsOverviewCursorLoader;
+
 import java.util.ArrayList;
 import java.util.HashSet;
 
@@ -26,14 +27,8 @@ public class MainActivity extends ListActivity implements LoaderManager.LoaderCa
     SimpleCursorAdapter mAdapter;
 
     // These are the Contacts rows that we will retrieve
-    static final String[] PROJECTION = new String[] {ContactsContract.Data._ID,
-            ContactsContract.Data.DISPLAY_NAME};
 
     // This is the select criteria
-    static final String SELECTION = "((" +
-            ContactsContract.Data.DISPLAY_NAME + " NOTNULL) AND (" +
-            ContactsContract.Data.DISPLAY_NAME + " != '' )) AND " +
-            ContactsContract.Data.MIMETYPE + " = ?";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,8 +63,7 @@ public class MainActivity extends ListActivity implements LoaderManager.LoaderCa
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         // Now create and return a CursorLoader that will take care of
         // creating a Cursor for the data being displayed.
-        return new CursorLoader(this, ContactsContract.Data.CONTENT_URI,
-                PROJECTION, SELECTION, new String[]{ContactsContract.CommonDataKinds.StructuredPostal.CONTENT_ITEM_TYPE}, null);
+        return new ContactsOverviewCursorLoader(this).getCursorLoader();
     }
 
     // Called when a previously created loader has finished loading
@@ -113,11 +107,11 @@ public class MainActivity extends ListActivity implements LoaderManager.LoaderCa
         HashSet<String> emlRecsHS = new HashSet<String>();
         Context context = this;
         ContentResolver cr = context.getContentResolver();
-        String[] PROJECTION = new String[] { ContactsContract.RawContacts._ID,
+        String[] PROJECTION = new String[]{ContactsContract.RawContacts._ID,
                 ContactsContract.Contacts.DISPLAY_NAME,
                 ContactsContract.Contacts.PHOTO_ID,
                 ContactsContract.CommonDataKinds.Email.DATA,
-                ContactsContract.CommonDataKinds.Photo.CONTACT_ID };
+                ContactsContract.CommonDataKinds.Photo.CONTACT_ID};
         String order = "CASE WHEN "
                 + ContactsContract.Contacts.DISPLAY_NAME
                 + " NOT LIKE '%@%' THEN 1 ELSE 2 END, "
