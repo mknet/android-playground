@@ -15,16 +15,22 @@ import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.SimpleCursorAdapter;
 
+import net.marcelkoch.playground.adapter.ContactListAdapter;
 import net.marcelkoch.playground.core.ContactsOverviewCursorLoader;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
 
 
 public class MainActivity extends ListActivity implements LoaderManager.LoaderCallbacks<Cursor> {
 
     // This is the Adapter being used to display the list's data
     SimpleCursorAdapter mAdapter;
+
+    ContactListAdapter contactListAdapter;
 
     // These are the Contacts rows that we will retrieve
 
@@ -45,16 +51,15 @@ public class MainActivity extends ListActivity implements LoaderManager.LoaderCa
         ViewGroup root = (ViewGroup) findViewById(android.R.id.content);
         root.addView(progressBar);
 
-        // For the cursor adapter, specify which columns go into which views
-        String[] fromColumns = {ContactsContract.Data.DISPLAY_NAME};
-        int[] toViews = {android.R.id.text1}; // The TextView in simple_list_item_1
 
         // Create an empty adapter we will use to display the loaded data.
         // We pass null for the cursor, then update it in onLoadFinished()
-        mAdapter = new SimpleCursorAdapter(this,
-                android.R.layout.simple_list_item_1, null,
-                fromColumns, toViews, 0);
-        setListAdapter(mAdapter);
+//        mAdapter = new SimpleCursorAdapter(this,
+//                android.R.layout.simple_list_item_1, null,
+//                fromColumns, toViews, 0);
+//        setListAdapter(mAdapter);
+
+
 
         getLoaderManager().initLoader(0, null, this);
     }
@@ -67,10 +72,32 @@ public class MainActivity extends ListActivity implements LoaderManager.LoaderCa
     }
 
     // Called when a previously created loader has finished loading
-    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+    public void onLoadFinished(Loader<Cursor> loader, Cursor cur) {
+
+        List<Map<String, String>> data = new ArrayList<Map<String, String>>();
+
+        while (cur.moveToNext()) {
+            String id = cur.getString(cur.getColumnIndex(ContactsContract.CommonDataKinds.Identity.CONTACT_ID));
+            String name = cur.getString(cur.getColumnIndex(ContactsContract.Data.DISPLAY_NAME));
+            String address = cur.getString(cur.getColumnIndex(ContactsContract.CommonDataKinds.StructuredPostal.FORMATTED_ADDRESS));
+
+            Map entry = new HashMap<String, String>();
+            entry.put("name", name);
+            entry.put("address", address);
+            data.add(entry);
+        }
+
+        // For the cursor adapter, specify which columns go into which views
+        String[] fromColumns = {"name"};
+        int[] toViews = {android.R.id.text1}; // The TextView in simple_list_item_1
+
+        contactListAdapter = new ContactListAdapter(this, data,android.R.layout.simple_list_item_1,fromColumns,toViews);
+        setListAdapter(contactListAdapter);
+
+
         // Swap the new cursor in.  (The framework will take care of closing the
         // old cursor once we return.)
-        mAdapter.swapCursor(data);
+        //mAdapter.swapCursor(cur);
 
         getNameEmailDetails();
     }

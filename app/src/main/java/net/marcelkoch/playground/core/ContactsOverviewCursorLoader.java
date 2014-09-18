@@ -13,7 +13,10 @@ import android.provider.ContactsContract;
 public class ContactsOverviewCursorLoader /*extends CursorLoader*/ {
 
     private static final String[] PROJECTION = new String[]{ContactsContract.Data._ID,
-            ContactsContract.Data.DISPLAY_NAME, ContactsContract.CommonDataKinds.StructuredPostal.FORMATTED_ADDRESS};
+            ContactsContract.Data.DISPLAY_NAME,
+            ContactsContract.CommonDataKinds.StructuredPostal.FORMATTED_ADDRESS,
+            ContactsContract.CommonDataKinds.Identity.CONTACT_ID
+    };
 
     private static final String SELECTION = ""
             + ContactsContract.Data.DISPLAY_NAME + " NOTNULL AND "
@@ -28,6 +31,9 @@ public class ContactsOverviewCursorLoader /*extends CursorLoader*/ {
 
     public Loader<Cursor> getCursorLoader() {
         return new CursorLoader(context, ContactsContract.Data.CONTENT_URI,
-                PROJECTION, SELECTION, new String[]{ContactsContract.CommonDataKinds.StructuredPostal.CONTENT_ITEM_TYPE}, null);
+                PROJECTION, SELECTION,
+                new String[]{ContactsContract.CommonDataKinds.StructuredPostal.CONTENT_ITEM_TYPE},
+                ContactsContract.Data.DISPLAY_NAME
+                );
     }
 }
