@@ -126,9 +126,9 @@ public class MainActivity extends ListActivity implements LoaderManager.LoaderCa
 
     @Override
     public void onListItemClick(ListView l, View v, int position, long id) {
-        Cursor cursor = (Cursor) l.getItemAtPosition(position);
-        String name = cursor.getString(1);
-        String address = cursor.getString(2);
+        Map<String,String> item = (Map) l.getItemAtPosition(position);
+        String name = item.get("name");
+        String address = item.get("address");
         startActivity(new Intent(this, MapActivity.class).putExtra("address", address));
     }
 
