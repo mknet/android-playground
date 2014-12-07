@@ -74,24 +74,27 @@ public class MainActivity extends ListActivity implements LoaderManager.LoaderCa
     // Called when a previously created loader has finished loading
     public void onLoadFinished(Loader<Cursor> loader, Cursor cur) {
 
-        List<Map<String, String>> data = new ArrayList<Map<String, String>>();
+        Map<String, Map<String, String>> data = new HashMap();
 
         while (cur.moveToNext()) {
             String id = cur.getString(cur.getColumnIndex(ContactsContract.CommonDataKinds.Identity.CONTACT_ID));
             String name = cur.getString(cur.getColumnIndex(ContactsContract.Data.DISPLAY_NAME));
             String address = cur.getString(cur.getColumnIndex(ContactsContract.CommonDataKinds.StructuredPostal.FORMATTED_ADDRESS));
 
-            Map entry = new HashMap<String, String>();
-            entry.put("name", name);
-            entry.put("address", address);
-            data.add(entry);
+
+            if (!data.containsKey(id)) {
+                Map entry = new HashMap<String, String>();
+                entry.put("name", name);
+                entry.put("address", address);
+                data.put(id, entry);
+            }
         }
 
         // For the cursor adapter, specify which columns go into which views
         String[] fromColumns = {"name"};
         int[] toViews = {android.R.id.text1}; // The TextView in simple_list_item_1
 
-        contactListAdapter = new ContactListAdapter(this, data,android.R.layout.simple_list_item_1,fromColumns,toViews);
+        contactListAdapter = new ContactListAdapter(this, new ArrayList(data.values()),android.R.layout.simple_list_item_1,fromColumns,toViews);
         setListAdapter(contactListAdapter);
 
 
