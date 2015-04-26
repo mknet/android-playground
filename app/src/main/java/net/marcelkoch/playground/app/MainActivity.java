@@ -21,7 +21,6 @@ import net.marcelkoch.playground.core.ContactsOverviewCursorLoader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 
 
@@ -73,6 +72,8 @@ public class MainActivity extends ListActivity implements LoaderManager.LoaderCa
 
     // Called when a previously created loader has finished loading
     public void onLoadFinished(Loader<Cursor> loader, Cursor cur) {
+
+        setContentView(R.layout.search);
 
         Map<String, Map<String, String>> data = new HashMap();
 
@@ -129,7 +130,7 @@ public class MainActivity extends ListActivity implements LoaderManager.LoaderCa
         Map<String,String> item = (Map) l.getItemAtPosition(position);
         String name = item.get("name");
         String address = item.get("address");
-        startActivity(new Intent(this, MapActivity.class).putExtra("address", address));
+        startActivity(new Intent(this, CreateJob.class).putExtra("address", address));
     }
 
     public ArrayList<String> getNameEmailDetails() {
