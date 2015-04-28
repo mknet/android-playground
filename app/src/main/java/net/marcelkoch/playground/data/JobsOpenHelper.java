@@ -4,12 +4,14 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.util.Log;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by marcel on 23.04.15.
  */
-public class JobsOpenHelper extends SQLiteOpenHelper {
+public class JobsOpenHelper extends SQLiteOpenHelper implements DAO<Job> {
 
     private static final int DATABASE_VERSION = 2;
     private static final String TABLE_NAME = "dictionary";
@@ -34,18 +36,25 @@ public class JobsOpenHelper extends SQLiteOpenHelper {
 
     }
 
+    public List<Job> getList() {
+        final Cursor cursor = this.getReadableDatabase().query(false, TABLE_NAME, new String[]{"message", "sender"}, null, null, null, null, null, null);
 
-    public void saveJob(String message, String address) {
-        SQLiteDatabase db = this.getWritableDatabase();
-
-        String ROW1 = "INSERT INTO " + TABLE_NAME + " Values ('"+message+"','"+address+"','long','lang');";
-        db.execSQL(ROW1);
-
-        Cursor cursor = this.getReadableDatabase().query(false, TABLE_NAME, new String[]{"message", "sender"}, null, null, null, null, null, null);
+        List<Job> result = new ArrayList<Job>();
+        Job job;
 
         while(cursor.moveToNext()) {
-            Log.d("MK", "message="+cursor.getString(0));
-            Log.d("MK", "sender=" + cursor.getString(1));
+            job = new Job();
+            job.message = cursor.getString(0);
+            result.add(job);
         }
+        return result;
+    }
+
+
+    public void save(final Job job) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        String ROW1 = "INSERT INTO " + TABLE_NAME + " Values ('"+job.message+"','"+job.address+"','long','lang');";
+        db.execSQL(ROW1);
     }
 }
