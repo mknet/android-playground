@@ -5,8 +5,9 @@
         android:title="Suche"
         playground:showAsAction="ifRoom"/>
     <item android:id="@+id/action_compose"
-        android:icon="@drawable/abc_ic_search"
-        android:title="Anlegen" />
+        android:icon="@drawable/ic_action_new"
+        android:title="Anlegen"
+        playground:showAsAction="ifRoom"/>/>
 
 
 </menu>
