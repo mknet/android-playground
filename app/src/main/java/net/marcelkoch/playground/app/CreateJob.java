@@ -46,11 +46,12 @@ public class CreateJob extends FragmentActivity {
         this.addressString = address;
 
         this.address = getLocationFromAddress(address);
-
-        TextView longitudeView = (TextView) findViewById(R.id.longitude);
-        longitudeView.setText(String.valueOf((this.address.getLongitude())));
-        TextView latitudeView = (TextView) findViewById(R.id.latitude);
-        latitudeView.setText(String.valueOf((this.address.getLatitude())));
+        if(null != this.address) {
+            TextView longitudeView = (TextView) findViewById(R.id.longitude);
+            longitudeView.setText(String.valueOf((this.address.getLongitude())));
+            TextView latitudeView = (TextView) findViewById(R.id.latitude);
+            latitudeView.setText(String.valueOf((this.address.getLatitude())));
+        }
 
         Intent intent = new Intent(this, GeoLocationWatcher.class);
         startService(intent);
@@ -66,7 +67,7 @@ public class CreateJob extends FragmentActivity {
 
         try {
             address = coder.getFromLocationName(strAddress, 5);
-            if (address == null) {
+            if (address == null || address.isEmpty()) {
                 return null;
             }
             location = address.get(0);
